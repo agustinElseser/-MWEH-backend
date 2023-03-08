@@ -12,7 +12,7 @@ const register = async (req, res) => {
   /*Prevenir usuarios duplicados*/
   const userDuplicate = await User.findOne({ email });
   if (userDuplicate) {
-    const error = new Error("USUARIO YA REGISTRADO");
+    const error = new Error("ALREADY REGISTERED USER");
     return res.status(400).json({ msg: error.message });
   }
 
@@ -38,7 +38,7 @@ const confirm = async (req, res) => {
   const { token } = req.params;
   const userConfirm = await User.findOne({ token });
   if (!userConfirm) {
-    const error = new Error("TOKEN NO VALIDO");
+    const error = new Error("INVALID TOKEN");
     return res.status(404).json({ msg: error.message });
   }
   try {
@@ -46,7 +46,7 @@ const confirm = async (req, res) => {
     userConfirm.confirm = true;
     await userConfirm.save();
 
-    res.json({ msg: "USUARIO CONFIRMADO" });
+    res.json({ msg: "CONFIRMED USER" });
   } catch (error) {
     console.log(error);
   }
@@ -71,13 +71,13 @@ const autentic = async (req, res) => {
   /*revisar que esta confirmado*/
   const user = await User.findOne({ email });
   if (!user) {
-    const error = new Error("USUARIO NO EXISTE");
+    const error = new Error("USER DON'T EXIST");
     return res.status(403).json({ msg: error.message });
   }
 
   /*revisar pw*/
   if (!user.confirm) {
-    const error = new Error("USUARIO SIN CONFIRMAR");
+    const error = new Error("UNCONFIRMED USER");
     return res.status(400).json({ msg: error.message });
   }
 
@@ -94,8 +94,8 @@ const autentic = async (req, res) => {
       favourite: user.favourite,
     });
   } else {
-    const error = new Error("EL PASSWORD ES INCORRECTO");
-    return res.status(400).json({ msg: "EL PASSWORD ES INCORRECTO" });
+    const error = new Error("PASSWORD INCORRECT");
+    return res.status(400).json({ msg: "PASSWORD INCORRECT" });
   }
 };
 
@@ -104,7 +104,7 @@ const resetPassword = async (req, res) => {
   const existUser = await User.findOne({ email });
 
   if (!existUser) {
-    const error = new Error("EL USUARIO NO EXISTE");
+    const error = new Error("USER DON'T EXIST");
     return res.status(400).json({ msg: error.message });
   }
 
@@ -128,9 +128,9 @@ const comprobarToken = async (req, res) => {
   const tokenValue = await User.findOne({ token });
 
   if (tokenValue) {
-    res.json({ msg: "TOKEN Y USUARIO VALIDOS" });
+    res.json({ msg: "VALID TOKEN AND USER" });
   } else {
-    const error = new Error("TOKEN NO VALIDO");
+    const error = new Error("INVALID TOKEN");
     return res.status(400).json({ msg: error.message });
   }
 };
@@ -141,7 +141,7 @@ const newPassword = async (req, res) => {
 
   const user = await User.findOne({ token });
   if (!user) {
-    const error = new Error("HUBO UN ERROR");
+    const error = new Error("ERROR");
     return res.status(400).json({ msg: error.message });
   }
 
@@ -149,30 +149,28 @@ const newPassword = async (req, res) => {
     user.token = null;
     user.password = password;
     await user.save();
-    res.json({ msg: "PASSWORD MODIFICADO CORRECTAMENTE" });
+    res.json({ msg: "PASSWORD MODIFIED CORRECTLY" });
   } catch (error) {}
 };
 
 const actualizarProfile = async (req, res) => {
-  console.log(req.body.name);
   const user = await User.findById(req.user._id);
 
   if (!user) {
-    const error = new Error("HUBO UN ERROR");
+    const error = new Error("ERROR");
     return res.status(400).json({ msg: error.message });
   }
   const { email } = req.user;
   if (user.email !== req.user.email) {
     const existeEmail = await User.findOne({ email });
     if (existeEmail) {
-      const error = new Error("ESE EMAIL ESTA EN USO");
+      const error = new Error("THE EMAIL IS ALREADY IN USE");
       return res.status(400).json({ msg: error.message });
     }
   }
   try {
     user.name = req.body.name || user.name;
     user.email = req.body.email || user.email;
-    console.log("act");
 
     const userActualizado = await user.save();
     res.json(userActualizado);
@@ -186,7 +184,7 @@ const actulizarPw = async (req, res) => {
   /*comprueba usuario*/
   const user = await User.findById(id);
   if (!user) {
-    const error = new Error("EL USUARIO NO EXISTE");
+    const error = new Error("USER DON'T EXIST");
     return res.status(400).json({ msg: error.message });
   }
 
@@ -194,10 +192,9 @@ const actulizarPw = async (req, res) => {
   if (await user.comprobarPassword(pw_act)) {
     user.password = pw_new;
     await user.save();
-    res.json({ msg: "PASSWORD MODIFICADO CORRECTAMENTE" });
+    res.json({ msg: "PASSWORD MODIFIED CORRECTLY" });
   } else {
-    console.log("incorrecto");
-    const error = new Error("PASSWORD INVALIDO");
+    const error = new Error("INVALID PASSWORD");
     return res.status(400).json({ msg: error.message });
   }
 };
@@ -207,7 +204,7 @@ const addFavourite = async (req, res) => {
   const fav = req.body.id;
 
   if (!req.body.id) {
-    return res.status(400).json({ msg: "PROYECTO NO ENCONTRADO" });
+    return res.status(400).json({ msg: "PROJECT NOT FOUND" });
   }
   if (req.body.action == "add") {
     try {

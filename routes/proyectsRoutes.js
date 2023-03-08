@@ -13,7 +13,8 @@ import {
 } from "../controllers/proyectsController.js";
 import checkAuth from "../middleware/authmiddleware.js";
 
-router.route("/").post(checkAuth, aggregateProyect).get(exploreMain);
+router.route("/").post(checkAuth, aggregateProyect);
+router.route("/explore").get(exploreMain);
 router.route("/myproyects").get(checkAuth, myProyects);
 
 router

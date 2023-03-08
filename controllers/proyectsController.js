@@ -10,7 +10,7 @@ const aggregateProyect = async (req, res) => {
   const { name } = req.body;
   const proyectDuplicate = await Proyect.findOne({ name });
   if (proyectDuplicate) {
-    const error = new Error("PROYECTO YA REGISTRADO");
+    const error = new Error("PROJECT ALREADY REGISTERED");
     return res.status(400).json({ msg: error.message });
   }
 
@@ -44,11 +44,11 @@ const obtenerProyect = async (req, res) => {
   const proyect = await Proyect.findById(id);
 
   if (!proyect) {
-    return res.status(400).json({ msg: "PROYECTO NO ENCONTRADO" });
+    return res.status(400).json({ msg: "PROJECT NOT FOUND" });
   }
 
   if (proyect.user._id.toString() !== req.user._id.toString()) {
-    return res.json({ msg: "ACCION NO VALIDA" });
+    return res.json({ msg: "INVALID ACTION" });
   }
 
   res.json(proyect);
@@ -59,11 +59,11 @@ const actualizarProyect = async (req, res) => {
   const proyect = await Proyect.findById(id);
 
   if (!proyect) {
-    return res.status(400).json({ msg: "PROYECTO NO ENCONTRADO" });
+    return res.status(400).json({ msg: "PROJECT NOT FOUND" });
   }
 
   if (proyect.user._id.toString() !== req.user._id.toString()) {
-    return res.json({ msg: "ACCION NO VALIDA" });
+    return res.json({ msg: "INVALID ACTION" });
   }
 
   /*ACTUALIZANDO*/
@@ -87,15 +87,15 @@ const eliminarProyect = async (req, res) => {
   const proyect = await Proyect.findById(id);
 
   if (!proyect) {
-    return res.status(400).json({ msg: "PROYECTO NO ENCONTRADO" });
+    return res.status(400).json({ msg: "PROJECT NOT FOUND" });
   }
 
   if (proyect.user._id.toString() !== req.user._id.toString()) {
-    return res.json({ msg: "ACCION NO VALIDA" });
+    return res.json({ msg: "INVALID ACTION" });
   }
   try {
     await proyect.deleteOne();
-    return res.json({ id: id, delete: true, msg: "PROYECTO ELIMINADO" });
+    return res.json({ id: id, delete: true, msg: "DELETED PROJECT" });
   } catch (error) {
     console.log(error);
   }
