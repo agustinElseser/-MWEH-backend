@@ -31,6 +31,7 @@ const obtenerProyects = async (req, res) => {
 
 const exploreMain = async (req, res) => {
   const proyects = await Proyect.find();
+  console.log("devolviendo proyectos");
   res.json(proyects);
 };
 
